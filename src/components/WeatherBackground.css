@@ -1,0 +1,123 @@
+/* ===== Weather Background — Bright Green Gradient ===== */
+
+.weather-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 340px;
+    z-index: 0;
+    overflow: hidden;
+    transition: background 0.8s ease;
+}
+
+/* Sunny — Bright green */
+.weather-bg--sunny {
+    background: linear-gradient(170deg, #43a047 0%, #66bb6a 50%, #81c784 100%);
+}
+
+/* Rainy — Muted teal-green */
+.weather-bg--rainy {
+    background: linear-gradient(170deg, #388e3c 0%, #4CAF50 50%, #66bb6a 100%);
+}
+
+/* Night — Deep calm green */
+.weather-bg--night {
+    background: linear-gradient(170deg, #1b5e20 0%, #2e7d32 50%, #388e3c 100%);
+}
+
+/* Curved bottom edge */
+.weather-bg::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: -10%;
+    right: -10%;
+    height: 60px;
+    background: var(--bg-primary);
+    border-radius: 50% 50% 0 0;
+}
+
+/* Sun rays effect */
+.weather-bg__rays {
+    position: absolute;
+    top: -40px;
+    right: -40px;
+    width: 200px;
+    height: 200px;
+    opacity: 0.2;
+    transition: opacity 0.8s ease;
+}
+
+.weather-bg--sunny .weather-bg__rays {
+    opacity: 0.3;
+}
+
+.weather-bg--night .weather-bg__rays {
+    opacity: 0.05;
+}
+
+.weather-bg__rays svg {
+    width: 100%;
+    height: 100%;
+}
+
+/* Floating leaf particles */
+.weather-bg__particles {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+}
+
+.weather-bg__particle {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    opacity: 0.15;
+    font-size: 16px;
+    animation: leafFloat linear infinite;
+}
+
+.weather-bg__particle:nth-child(1) {
+    left: 15%;
+    top: 20%;
+    animation-duration: 12s;
+    animation-delay: -2s;
+}
+
+.weather-bg__particle:nth-child(2) {
+    left: 60%;
+    top: 10%;
+    animation-duration: 15s;
+    animation-delay: -5s;
+}
+
+.weather-bg__particle:nth-child(3) {
+    left: 80%;
+    top: 35%;
+    animation-duration: 18s;
+    animation-delay: -8s;
+}
+
+.weather-bg__particle:nth-child(4) {
+    left: 35%;
+    top: 45%;
+    animation-duration: 14s;
+    animation-delay: -3s;
+}
+
+@keyframes leafFloat {
+    0% {
+        transform: translateY(0) rotate(0deg);
+        opacity: 0.15;
+    }
+
+    50% {
+        opacity: 0.25;
+    }
+
+    100% {
+        transform: translateY(-100px) rotate(180deg);
+        opacity: 0;
+    }
+}

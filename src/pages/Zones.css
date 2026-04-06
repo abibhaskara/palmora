@@ -1,0 +1,159 @@
+.zones__icon-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-md);
+    background: var(--surface-muted);
+    border: 1px solid var(--border-subtle);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all var(--transition-base);
+}
+
+.zones__icon-btn:hover {
+    background: var(--primary-100);
+    color: var(--accent-green);
+}
+
+.zones__ai-btn {
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-family: var(--font-display);
+}
+
+/* Map */
+.zones__map {
+    position: relative;
+    min-height: 220px;
+    overflow: hidden;
+}
+
+.zones__map-bg {
+    position: absolute;
+    inset: var(--space-lg);
+    opacity: 0.4;
+}
+
+.zones__map-svg {
+    width: 100%;
+    height: 100%;
+}
+
+.zones__map-grid {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-md);
+}
+
+.zones__map-zone {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    padding: var(--space-md);
+    background: var(--surface-muted);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: all var(--transition-base);
+}
+
+.zones__map-zone:hover,
+.zones__map-zone--selected {
+    border-color: var(--zone-color);
+    box-shadow: 0 0 12px color-mix(in srgb, var(--zone-color) 15%, transparent);
+    background: var(--surface-card);
+}
+
+.zones__map-zone-label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    flex: 1;
+    color: var(--text-primary);
+}
+
+.zones__map-zone-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+}
+
+.zones__map-zone-dot--healthy {
+    background: var(--accent-green);
+}
+
+.zones__map-zone-dot--warning {
+    background: var(--accent-amber);
+    animation: pulse 2s infinite;
+}
+
+.zones__map-zone-dot--critical {
+    background: var(--accent-coral);
+    animation: pulse 1s infinite;
+}
+
+/* Zone Cards */
+.zones__card {
+    cursor: pointer;
+    border-left: 3px solid transparent;
+    transition: all var(--transition-base);
+}
+
+.zones__card--selected {
+    border-left-color: var(--zone-color);
+}
+
+.zones__card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--space-md);
+}
+
+.zones__card-name {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 1rem;
+    color: var(--text-primary);
+}
+
+.zones__card-stats {
+    display: flex;
+    gap: var(--space-lg);
+    margin-bottom: var(--space-md);
+}
+
+.zones__card-stat {
+    display: flex;
+    flex-direction: column;
+}
+
+.zones__card-stat-value {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--text-primary);
+}
+
+.zones__card-stat-label {
+    font-size: 0.65rem;
+    color: var(--text-tertiary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.zones__card-bar {
+    height: 4px;
+    background: var(--surface-muted);
+    border-radius: var(--radius-full);
+    overflow: hidden;
+}
+
+.zones__card-bar-fill {
+    height: 100%;
+    border-radius: var(--radius-full);
+    transition: width 1s cubic-bezier(0.16, 1, 0.3, 1);
+}

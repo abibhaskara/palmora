@@ -1,0 +1,248 @@
+/* ================================================================
+   Report Page — Smart Garden AI style
+   ================================================================ */
+
+.report {
+    background: #f3f4f0;
+    font-family: var(--font-body, 'Inter', sans-serif);
+    padding: 0;
+}
+
+/* ── Tab pills ──────────────────────────────────────────────────── */
+.tab-pills {
+    display: flex;
+    gap: 8px;
+    background: #fff;
+    border-radius: 14px;
+    padding: 5px;
+    box-shadow: 0 1px 6px rgba(0,0,0,0.06);
+}
+
+.tab-pill {
+    flex: 1;
+    padding: 9px 12px;
+    border-radius: 10px;
+    border: none;
+    background: transparent;
+    color: #888;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: inherit;
+    text-transform: capitalize;
+}
+.tab-pill:hover { color: #333; }
+.tab-pill--active {
+    background: #1a1a1a;
+    color: #fff;
+}
+
+/* ── Report summary text ────────────────────────────────────────── */
+.report__header-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 14px;
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+}
+
+.report__summary {
+    font-size: 14px;
+    color: #555;
+    line-height: 1.7;
+    margin: 0;
+}
+
+.report__loading {
+    font-size: 13px;
+    color: #4caf50;
+    text-align: center;
+    padding: 12px 0;
+    margin: 0;
+    animation: reportPulse 1.5s ease-in-out infinite;
+}
+
+@keyframes reportPulse {
+    0%, 100% { opacity: 0.5; }
+    50% { opacity: 1; }
+}
+
+.report__error {
+    font-size: 13px;
+    color: #ef5350;
+    margin: 0;
+    padding: 8px 0;
+}
+
+.report__regen-btn {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 5px 12px;
+    border-radius: 8px;
+    border: 1px solid #e8e8e8;
+    background: #fff;
+    font-size: 11px;
+    font-weight: 600;
+    color: #4caf50;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: inherit;
+}
+.report__regen-btn:hover { border-color: #4caf50; background: rgba(76,175,80,0.05); }
+.report__regen-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+.report__spin {
+    animation: reportSpin 1s linear infinite;
+}
+@keyframes reportSpin {
+    to { transform: rotate(360deg); }
+}
+
+/* ── List items ─────────────────────────────────────────────────── */
+.report__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.report__list-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-size: 13px;
+    color: #444;
+    line-height: 1.5;
+}
+
+.report__list-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #4caf50;
+    margin-top: 5px;
+    flex-shrink: 0;
+}
+
+.report__list-item--success .report__list-dot { background: #4caf50; }
+.report__list-item--warning .report__list-dot { background: #ff9800; }
+.report__list-item--danger  .report__list-dot { background: #ef5350; }
+
+.report__list-num {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: #1a1a1a;
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 1px;
+}
+
+/* ── Chat panel ─────────────────────────────────────────────────── */
+.report__chat {
+    position: fixed;
+    bottom: 80px;
+    left: 12px;
+    right: 12px;
+    background: #fff;
+    border-radius: 24px;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.15);
+    overflow: hidden;
+    z-index: 200;
+    max-height: 360px;
+    display: flex;
+    flex-direction: column;
+}
+
+.report__chat-messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    scrollbar-width: thin;
+}
+
+.report__chat-msg {
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+}
+
+.report__chat-msg--user { flex-direction: row-reverse; }
+
+.report__chat-avatar {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #388e3c, #4caf50);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    flex-shrink: 0;
+}
+
+.report__chat-bubble {
+    max-width: 80%;
+    padding: 10px 14px;
+    border-radius: 18px;
+    font-size: 13px;
+    line-height: 1.5;
+    color: #333;
+    background: #f3f4f0;
+}
+.report__chat-msg--user .report__chat-bubble {
+    background: #1a1a1a;
+    color: #fff;
+}
+
+.report__chat-input-wrap {
+    display: flex;
+    gap: 8px;
+    padding: 12px 16px;
+    border-top: 1px solid #f0f0f0;
+}
+
+.report__chat-input {
+    flex: 1;
+    padding: 10px 14px;
+    border-radius: 12px;
+    border: 1.5px solid #eee;
+    background: #f9f9f9;
+    font-size: 13px;
+    outline: none;
+    font-family: inherit;
+    color: #333;
+}
+.report__chat-input:focus { border-color: rgba(76,175,80,0.4); }
+
+.report__chat-send {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    border: none;
+    background: #1a1a1a;
+    color: #fff;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: background 0.2s;
+}
+.report__chat-send:hover { background: #4caf50; }
