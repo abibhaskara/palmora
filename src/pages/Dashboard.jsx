@@ -31,7 +31,7 @@ const DAILY_DATA = generateDailyData();
 export default function Dashboard() {
   const { realWeather, sensorData, solarPower, growthData, alerts, markAlertRead } = useData();
   const { user, harvestInfo } = useUser();
-  const { t } = useLang();
+  const { t, lang } = useLang();
   const navigate = useNavigate();
   const { onNavChange } = useNavDirection();
 
@@ -75,7 +75,8 @@ Sensor Data:
 ${realWeather.temp != null ? `Weather: ${realWeather.description}, ${realWeather.temp}°C` : ''}
 Active Alerts: ${activeAlerts}
 
-Give 3–5 bullet points using 🟢🟡🔴 for status. End with one action recommendation. Be very concise.`;
+Give 3–5 bullet points using 🟢🟡🔴 for status. End with one action recommendation. Be very concise.
+LANGUAGE RULE — CRITICAL: Respond ENTIRELY in ${lang === 'id' ? 'Indonesian (Bahasa Indonesia). Do NOT use English.' : lang === 'ms' ? 'Malay (Bahasa Melayu). Do NOT use English.' : 'English.'}`;
 
       const result = await model.generateContent(prompt);
       setAiResult(result.response.text());

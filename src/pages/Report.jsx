@@ -10,7 +10,7 @@ import './Report.css';
 export default function Report() {
     const { sensorData, alerts, realWeather } = useData();
     const { user, harvestInfo } = useUser();
-    const { t } = useLang();
+    const { t, lang } = useLang();
     const [period, setPeriod] = useState('week');
     const [chatOpen, setChatOpen] = useState(false);
     const [chatMessages, setChatMessages] = useState([
@@ -53,7 +53,8 @@ Respond ONLY with valid JSON (no markdown, no backticks) in this exact format:
   "progress": ["point 1", "point 2", "point 3"],
   "issues": [{"text": "issue description", "severity": "warning or danger"}, ...],
   "futurePlan": ["action 1", "action 2", "action 3"]
-}`;
+}
+LANGUAGE RULE — CRITICAL: ALL text values in the JSON MUST be written in ${lang === 'id' ? 'Indonesian (Bahasa Indonesia). Do NOT use English.' : lang === 'ms' ? 'Malay (Bahasa Melayu). Do NOT use English.' : 'English.'}`;
 
             const result = await model.generateContent(prompt);
             const raw = result.response.text().trim();

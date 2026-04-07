@@ -6,12 +6,26 @@ import { useUser } from '../context/UserContext';
 import { useLang } from '../context/LanguageContext';
 import './AIChatbot.css';
 
-const QUICK_PROMPTS = [
-    "Analyze the overall plantation health.",
-    "Are there any irrigation risks today?",
-    "Evaluate pest threats in Zone D.",
-    "Project harvest readiness.",
-];
+const QUICK_PROMPTS = {
+    en: [
+        "Analyze the overall plantation health.",
+        "Are there any irrigation risks today?",
+        "Evaluate pest threats in Zone D.",
+        "Project harvest readiness.",
+    ],
+    id: [
+        "Analisis kesehatan perkebunan secara keseluruhan.",
+        "Apakah ada risiko irigasi hari ini?",
+        "Evaluasi ancaman hama di Zona D.",
+        "Proyeksikan kesiapan panen.",
+    ],
+    ms: [
+        "Analisis kesihatan ladang secara keseluruhan.",
+        "Adakah terdapat risiko pengairan hari ini?",
+        "Nilaikan ancaman perosak di Zon D.",
+        "Ramalkan kesediaan tuaian.",
+    ],
+};
 
 function buildSystemContext(sensorData, zones, alerts, harvestInfo, realWeather, lang) {
     const zonesSummary = zones.map(z =>
@@ -54,7 +68,7 @@ ${alertsSummary}
 3. Be concise, authoritative, and structure your analysis with bullet points and bold text for readability.
 4. If asked a general question, synthesize a brief "State of the Plantation" report.
 5. Use emojis strategically to signify status (🟢 🟡 🔴).
-6. IMPORTANT: You must respond entirely in ${lang === 'id' ? 'Indonesian (Bahasa Indonesia)' : lang === 'ms' ? 'Malay (Bahasa Melayu)' : 'English'}.`;
+6. LANGUAGE RULE — CRITICAL: You MUST write your ENTIRE response in ${lang === 'id' ? 'Indonesian (Bahasa Indonesia). Do NOT use English under any circumstances.' : lang === 'ms' ? 'Malay (Bahasa Melayu). Do NOT use English under any circumstances.' : 'English. Do NOT use Indonesian or Malay.'} This rule overrides everything else.`;
 }
 
 export default function AIChatbot() {
@@ -66,7 +80,6 @@ export default function AIChatbot() {
     const [input, setInput] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
-    const [chat, setChat] = useState(null);
     const messagesEndRef = useRef(null);
     const inputRef = useRef(null);
 
@@ -80,31 +93,6 @@ export default function AIChatbot() {
         if (isOpen) setTimeout(() => inputRef.current?.focus(), 300);
     }, [isOpen]);
 
-    // Initialize Gemini 2.0 Flash Lite (for generous free tier)
-    const initChat = () => {
-        const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
-        if (!apiKey || apiKey === 'your_gemini_api_key_here') {
-            setError('⚠️ Invalid or missing Gemini API Key in .env');
-            return null;
-        }
-        try {
-            const genAI = new GoogleGenerativeAI(apiKey);
-            const model = genAI.getGenerativeModel({
-                model: 'gemini-2.5-flash',
-                systemInstruction: buildSystemContext(sensorData, zones, alerts, harvestInfo, realWeather, lang),
-            });
-            const newChat = model.startChat({
-                history: [],
-                generationConfig: { maxOutputTokens: 800, temperature: 0.4 }, // Lower temp for analytical precision
-            });
-            setChat(newChat);
-            return newChat;
-        } catch (err) {
-            setError('Failed to initialize Gemini: ' + err.message);
-            return null;
-        }
-    };
-
     const sendMessage = async (text) => {
         const messageText = text || input.trim();
         if (!messageText || isLoading) return;
@@ -113,20 +101,38 @@ export default function AIChatbot() {
         setError(null);
 
         const userMsg = { role: 'user', content: messageText, id: Date.now() };
+        // Immediately update UI
         setMessages(prev => [...prev, userMsg]);
         setIsLoading(true);
 
-        try {
-            let activeChat = chat;
-            if (!activeChat) {
-                activeChat = initChat();
-                if (!activeChat) {
-                    setIsLoading(false);
-                    return; // initChat sets the error state
-                }
-            }
+        const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
+        if (!apiKey || apiKey === 'your_gemini_api_key_here') {
+            setError('⚠️ Invalid or missing Gemini API Key in .env');
+            setIsLoading(false);
+            return;
+        }
 
-            const result = await activeChat.sendMessage(messageText);
+        try {
+            const genAI = new GoogleGenerativeAI(apiKey);
+            const model = genAI.getGenerativeModel({
+                model: 'gemini-2.5-flash',
+                // This call now always gets the freshest React state (sensorData, etc)
+                systemInstruction: buildSystemContext(sensorData, zones, alerts, harvestInfo, realWeather, lang),
+            });
+
+            // Map our UI messages state to Gemini history format
+            // EXCLUDE the message we just added to the UI array, because Gemini expects it in sendMessage()
+            const history = messages.filter(m => !m.isError).map(m => ({
+                role: m.role === 'assistant' ? 'model' : 'user',
+                parts: [{ text: m.content }]
+            }));
+
+            const freshChat = model.startChat({
+                history: history,
+                generationConfig: { maxOutputTokens: 800, temperature: 0.4 },
+            });
+
+            const result = await freshChat.sendMessage(messageText);
             const responseText = result.response.text();
 
             setMessages(prev => [...prev, {
@@ -167,9 +173,7 @@ export default function AIChatbot() {
 
     const handleReset = () => {
         setMessages([]);
-        setChat(null);
         setError(null);
-        initChat();
     };
 
     return (
@@ -211,7 +215,7 @@ export default function AIChatbot() {
                                 {t('monitoring_telemetry', 'I am monitoring the live telemetry of your plantation. Ask me to deeply analyze the structural health, yield projections, or environmental risks.')}
                             </div>
                             <div className="ai-chat-quick-prompts">
-                                {QUICK_PROMPTS.map((prompt, i) => (
+                                {(QUICK_PROMPTS[lang] || QUICK_PROMPTS.en).map((prompt, i) => (
                                     <button key={i} className="ai-chat-quick-btn" onClick={() => sendMessage(prompt)}>
                                         {prompt}
                                     </button>

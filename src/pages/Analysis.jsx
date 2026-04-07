@@ -50,7 +50,7 @@ const AI_INSIGHTS = [
 export default function Analysis() {
     const { sensorData, zones, realWeather } = useData();
     const { user, harvestInfo } = useUser();
-    const { t } = useLang();
+    const { t, lang } = useLang();
     const [selectedZone, setSelectedZone] = useState(null);
     const [expandedInsight, setExpandedInsight] = useState(null);
     const [insightDescs, setInsightDescs] = useState({});
@@ -75,7 +75,8 @@ Live data:
 - Harvest: Day ${harvestInfo.currentDay}/${harvestInfo.totalCycleDays} (${harvestInfo.daysToHarvest} days left)
 ${realWeather?.temp != null ? `- Weather: ${realWeather.description}, ${realWeather.temp}°C` : ''}
 
-Respond with ONLY the 2-sentence insight, no formatting.`;
+Respond with ONLY the 2-sentence insight, no formatting.
+LANGUAGE RULE — CRITICAL: Write ENTIRELY in ${lang === 'id' ? 'Indonesian (Bahasa Indonesia). Do NOT use English.' : lang === 'ms' ? 'Malay (Bahasa Melayu). Do NOT use English.' : 'English.'}`;
 
             const result = await model.generateContent(prompt);
             const text = result.response.text().trim();
