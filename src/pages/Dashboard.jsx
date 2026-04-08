@@ -56,7 +56,7 @@ export default function Dashboard() {
     try {
       const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
       if (!apiKey || apiKey === 'your_gemini_api_key_here') throw new Error('Missing Gemini API key');
-      const model = new GoogleGenerativeAI(apiKey).getGenerativeModel({ model: 'gemini-2.5-flash' });
+      const model = new GoogleGenerativeAI(apiKey).getGenerativeModel({ model: 'gemini-2.5-flash-lite' });
 
       const activeAlerts = alerts.filter(a => !a.read)
         .map(a => `[${a.type.toUpperCase()}] ${a.title}`).join('\n') || 'None';

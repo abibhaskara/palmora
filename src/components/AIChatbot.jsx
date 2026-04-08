@@ -115,7 +115,7 @@ export default function AIChatbot() {
         try {
             const genAI = new GoogleGenerativeAI(apiKey);
             const model = genAI.getGenerativeModel({
-                model: 'gemini-2.5-flash',
+                model: 'gemini-2.5-flash-lite',
                 // This call now always gets the freshest React state (sensorData, etc)
                 systemInstruction: buildSystemContext(sensorData, zones, alerts, harvestInfo, realWeather, lang),
             });
