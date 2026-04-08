@@ -29,7 +29,7 @@ export default function Report() {
         try {
             const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
             if (!apiKey || apiKey === 'your_gemini_api_key_here') throw new Error('Missing Gemini API key');
-            const model = new GoogleGenerativeAI(apiKey).getGenerativeModel({ model: 'gemini-2.5-flash' });
+            const model = new GoogleGenerativeAI(apiKey).getGenerativeModel({ model: 'gemini-1.5-flash' }); // stable model
 
             const activeAlerts = alerts.filter(a => !a.read).map(a => `${a.title} (${a.zone})`).join(', ') || 'None';
 
@@ -146,7 +146,7 @@ LANGUAGE RULE — CRITICAL: ALL text values in the JSON MUST be written in ${lan
             </div>
 
             {/* Current Progress */}
-            {(reportLoading || (reportData && reportData.progress?.length > 0)) && (
+            {(reportLoading && !reportError) || (reportData && reportData.progress?.length > 0) ? (
             <div className="section animate-in animate-delay-3">
                 <div className="section-header">
                     <span className="section-title">
@@ -168,10 +168,10 @@ LANGUAGE RULE — CRITICAL: ALL text values in the JSON MUST be written in ${lan
                     )}
                 </div>
             </div>
-            )}
+            ) : null}
 
             {/* Issues */}
-            {(reportLoading || (reportData && reportData.issues?.length > 0)) && (
+            {(reportLoading && !reportError) || (reportData && reportData.issues?.length > 0) ? (
             <div className="section animate-in animate-delay-4">
                 <div className="section-header">
                     <span className="section-title">
@@ -193,10 +193,10 @@ LANGUAGE RULE — CRITICAL: ALL text values in the JSON MUST be written in ${lan
                     )}
                 </div>
             </div>
-            )}
+            ) : null}
 
             {/* Future Plan */}
-            {(reportLoading || (reportData && reportData.futurePlan?.length > 0)) && (
+            {(reportLoading && !reportError) || (reportData && reportData.futurePlan?.length > 0) ? (
             <div className="section animate-in animate-delay-5">
                 <div className="section-header">
                     <span className="section-title">
@@ -218,7 +218,7 @@ LANGUAGE RULE — CRITICAL: ALL text values in the JSON MUST be written in ${lan
                     )}
                 </div>
             </div>
-            )}
+            ) : null}
 
 
             {/* AI Chat Panel */}

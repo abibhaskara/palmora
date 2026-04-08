@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { supabase } from '../lib/supabase';
+import palmImg from '../assets/palm.png';
 
 const PLANT_TYPES = {
   'Palm Oil':    { cycleDays: 180, daysToHarvest: 30  },
@@ -13,11 +14,22 @@ const PLANT_TYPES = {
 
 export { PLANT_TYPES };
 
+const DEFAULT_USER = {
+  id: 'guest',
+  name: 'Palmora User',
+  email: 'guest@palmora.com',
+  onboarded: true,
+  plantName: 'My Palm Oil',
+  plantType: 'Palm Oil',
+  plantedAt: new Date(Date.now() - 40 * 24 * 60 * 60 * 1000).toISOString(), // 40 days ago
+  plantPhotoUrl: palmImg
+};
+
 const UserContext = createContext(null);
 
 export function UserProvider({ children }) {
   const [session, setSession] = useState(null);
-  const [user, setUser] = useState(null); // unified state for legacy support (profile + active plant)
+  const [user, setUser] = useState(DEFAULT_USER); // unified state with default guest
   const [loading, setLoading] = useState(true);
 
   // Initialize Auth Session
@@ -25,14 +37,14 @@ export function UserProvider({ children }) {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       if (session) fetchUserData(session.user);
-      else setLoading(false);
+      else setLoading(false); // Stay with DEFAULT_USER
     });
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
       if (session) fetchUserData(session.user);
       else {
-        setUser(null);
+        setUser(DEFAULT_USER);
         setLoading(false);
       }
     });
@@ -66,11 +78,15 @@ export function UserProvider({ children }) {
           plantedAt: p.planted_at,
           onboarded: true
         };
+      } else {
+        // If logged in but no plant, use defaults but keep auth info
+        combined = { ...combined, ...DEFAULT_USER, id: authUser.id, email: authUser.email };
       }
       
       setUser(combined);
     } catch (error) {
       console.error("Error fetching user data from Supabase:", error);
+      setUser(DEFAULT_USER);
     } finally {
       setLoading(false);
     }

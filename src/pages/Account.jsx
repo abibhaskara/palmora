@@ -71,14 +71,14 @@ export default function Account() {
           <p className="profile-email">{email || 'farmer@palmora.ai'}</p>
         </div>
 
-        <div className="settings-group">
+        <form className="settings-group" onSubmit={(e) => { e.preventDefault(); handleSave(); }} autoComplete="on">
           <div className="setting-item">
             <label><User size={16} /> {t('full_name')}</label>
             <input 
               type="text" 
               value={name} 
               onChange={(e) => setName(e.target.value)} 
-              placeholder="Enter your name"
+              autoComplete="name"
             />
           </div>
 
@@ -88,7 +88,7 @@ export default function Account() {
               type="email" 
               value={email} 
               onChange={(e) => setEmail(e.target.value)} 
-              placeholder="your@email.com"
+              autoComplete="email"
             />
           </div>
 
@@ -99,6 +99,7 @@ export default function Account() {
                 type="password" 
                 value={password} 
                 onChange={(e) => setPassword(e.target.value)} 
+                autoComplete="current-password"
                 placeholder="••••••••"
               />
               <button 
@@ -111,7 +112,7 @@ export default function Account() {
               </button>
             </div>
           </div>
-        </div>
+        </form>
 
         <div className="account-actions">
           <button 

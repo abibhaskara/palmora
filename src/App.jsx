@@ -2,12 +2,10 @@ import { useState, useCallback, useRef, createContext, useContext } from 'react'
 import { BrowserRouter, Routes, Route, useLocation, useNavigate } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import { DataProvider } from './context/DataContext';
-import { UserProvider, useUser } from './context/UserContext';
+import { UserProvider } from './context/UserContext';
 import { LanguageProvider } from './context/LanguageContext';
 import LivingNavbar from './components/LivingNavbar';
 import AIChatbot from './components/AIChatbot';
-import SplashScreen from './components/SplashScreen';
-import Onboarding from './pages/Onboarding';
 import Dashboard from './pages/Dashboard';
 import Analysis from './pages/Analysis';
 import Report from './pages/Report';
@@ -65,18 +63,10 @@ function AnimatedRoutes({ direction }) {
   );
 }
 
-/** Inner shell — reads user from context */
+/** Inner shell — simplified to bypass auth/onboarding */
 function AppShell() {
-  const { user } = useUser();
-  const [splashDone, setSplashDone] = useState(false);
-  const [onboardingDone, setOnboardingDone] = useState(false);
   const [direction, setDirection] = useState(0);
   const prevIndexRef = useRef(0);
-
-  const handleSplashDone = useCallback(() => setSplashDone(true), []);
-  const handleOnboardingDone = useCallback(() => setOnboardingDone(true), []);
-
-  const isOnboarded = user?.onboarded || onboardingDone;
 
   /* Called by LivingNavbar before navigating to compute direction */
   const handleNavChange = useCallback((toPath) => {
@@ -88,29 +78,19 @@ function AppShell() {
   }, []);
 
   return (
-    <>
-      {!splashDone && <SplashScreen onDone={handleSplashDone} />}
-
-      {splashDone && !isOnboarded && (
-        <Onboarding onComplete={handleOnboardingDone} />
-      )}
-
-      {isOnboarded && (
-        <NavDirectionContext.Provider value={{ direction, onNavChange: handleNavChange }}>
-          <div className="app-container" style={{ overflowX: 'hidden', overflowY: 'auto', position: 'relative' }}>
-            <AnimatedRoutes direction={direction} />
+    <NavDirectionContext.Provider value={{ direction, onNavChange: handleNavChange }}>
+      <div className="app-container" style={{ overflowX: 'hidden', overflowY: 'auto', position: 'relative' }}>
+        <AnimatedRoutes direction={direction} />
+      </div>
+      <div className="fixed-overlay-wrapper">
+        <div className="fixed-overlay-content">
+          <div className="fixed-nav-cluster">
+            <LivingNavbar />
+            <AIChatbot />
           </div>
-          <div className="fixed-overlay-wrapper">
-            <div className="fixed-overlay-content">
-              <div className="fixed-nav-cluster">
-                <LivingNavbar />
-                <AIChatbot />
-              </div>
-            </div>
-          </div>
-        </NavDirectionContext.Provider>
-      )}
-    </>
+        </div>
+      </div>
+    </NavDirectionContext.Provider>
   );
 }
 
