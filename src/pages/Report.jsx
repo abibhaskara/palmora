@@ -29,7 +29,7 @@ export default function Report() {
         try {
             const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
             if (!apiKey || apiKey === 'your_gemini_api_key_here') throw new Error('Missing Gemini API key');
-            const model = new GoogleGenerativeAI(apiKey).getGenerativeModel({ model: 'gemini-2.5-flash-preview-04-17' }); // stable model
+            const model = new GoogleGenerativeAI(apiKey).getGenerativeModel({ model: 'gemini-2.5-flash' }); // stable model
 
             const activeAlerts = alerts.filter(a => !a.read).map(a => `${a.title} (${a.zone})`).join(', ') || 'None';
 
