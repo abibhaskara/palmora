@@ -8,7 +8,7 @@ import './Report.css';
 
 
 export default function Report() {
-    const { sensorData, alerts, realWeather } = useData();
+    const { sensorData, alerts, realWeather, sensorHistory } = useData();
     const { user, harvestInfo } = useUser();
     const { t, lang } = useLang();
     const [period, setPeriod] = useState('week');
@@ -33,17 +33,27 @@ export default function Report() {
 
             const activeAlerts = alerts.filter(a => !a.read).map(a => `${a.title} (${a.zone})`).join(', ') || 'None';
 
+            let historySlice = sensorHistory;
+            if (p === 'week') historySlice = sensorHistory.slice(-7);
+
+            const avgSoil = (historySlice.reduce((sum, d) => sum + d.soil, 0) / historySlice.length).toFixed(1);
+            const avgTemp = (historySlice.reduce((sum, d) => sum + d.temp, 0) / historySlice.length).toFixed(1);
+            const avgHum = (historySlice.reduce((sum, d) => sum + d.humidity, 0) / historySlice.length).toFixed(1);
+
             const prompt = `You are PALMORA AI, an expert agronomist report generator.
 
-Generate a ${p}ly plantation report based on this live data:
+Generate a ${p}ly plantation report based on this live data and historical context:
 
 Plant: ${user?.plantName || 'Palm'} (${user?.plantType || 'Palm Oil'})
 Harvest: Day ${harvestInfo.currentDay}/${harvestInfo.totalCycleDays} — ${harvestInfo.daysToHarvest} days left
-Soil Moisture: ${sensorData.soilMoisture.toFixed(1)}%
-Temperature: ${sensorData.temperature.toFixed(1)}°C
-Humidity: ${sensorData.humidity.toFixed(0)}%
-UV Index: ${sensorData.uvIndex.toFixed(1)}
 Health Score: ${sensorData.healthScore.toFixed(0)}/100
+
+Current vs Historical Avg (last ${historySlice.length} days):
+Soil Moisture: ${sensorData.soilMoisture.toFixed(1)}% (Past Avg: ${avgSoil}%)
+Temperature: ${sensorData.temperature.toFixed(1)}°C (Past Avg: ${avgTemp}°C)
+Humidity: ${sensorData.humidity.toFixed(0)}% (Past Avg: ${avgHum}%)
+UV Index: ${sensorData.uvIndex.toFixed(1)}
+
 ${realWeather.temp != null ? `Weather: ${realWeather.description}, ${realWeather.temp}°C` : ''}
 Active Alerts: ${activeAlerts}
 
@@ -68,7 +78,7 @@ LANGUAGE RULE — CRITICAL: ALL text values in the JSON MUST be written in ${lan
         } finally {
             setReportLoading(false);
         }
-    }, [sensorData, alerts, realWeather, user, harvestInfo]);
+    }, [sensorData, alerts, realWeather, user, harvestInfo, sensorHistory]);
 
     useEffect(() => {
         generateReport(period);

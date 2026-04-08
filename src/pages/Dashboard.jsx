@@ -15,21 +15,8 @@ import palmImg from '../assets/palm.png';
 
 
 const TIME_RANGES = ['3 Days', '1 Week', '1 Month', 'Custom'];
-
-const SENSOR_HISTORY = {
-  '3 Days': [],
-  '1 Week': [],
-  '1 Month': [],
-};
-
-// Return empty data to reset the chart
-const generateDailyData = () => {
-  return [];
-};
-
-const DAILY_DATA = generateDailyData();
 export default function Dashboard() {
-  const { realWeather, sensorData, solarPower, growthData, alerts, markAlertRead } = useData();
+  const { realWeather, sensorData, solarPower, growthData, alerts, markAlertRead, sensorHistory } = useData();
   const { user, harvestInfo } = useUser();
   const { t, lang } = useLang();
   const navigate = useNavigate();
@@ -102,9 +89,11 @@ LANGUAGE RULE — CRITICAL: Respond ENTIRELY in ${lang === 'id' ? 'Indonesian (B
   const getChartData = () => {
     if (chartRange === 'Custom') {
       if (!customFrom || !customTo) return [];
-      return DAILY_DATA.filter(d => d.date >= customFrom && d.date <= customTo);
+      return sensorHistory.filter(d => d.date >= customFrom && d.date <= customTo);
     }
-    return SENSOR_HISTORY[chartRange] || [];
+    if (chartRange === '3 Days') return sensorHistory.slice(-3);
+    if (chartRange === '1 Week') return sensorHistory.slice(-7);
+    return sensorHistory; // '1 Month' returns all 30 days
   };
 
   const chartData = getChartData();

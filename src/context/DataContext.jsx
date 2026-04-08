@@ -23,6 +23,25 @@ const GROWTH_DATA = [
   { month: 'Feb', growth: 92, target: 90 },
 ];
 
+function generateSensorHistory(days = 30) {
+  const data = [];
+  const now = new Date();
+  for (let i = days - 1; i >= 0; i--) {
+    const d = new Date(now);
+    d.setDate(d.getDate() - i);
+    data.push({
+      date: d.toISOString().split('T')[0],
+      time: d.toLocaleDateString('en-US', { day: 'numeric', month: 'short' }),
+      soil: Math.floor(Math.random() * (85 - 55) + 55),
+      uv: parseFloat((Math.random() * (9 - 3) + 3).toFixed(1)),
+      temp: parseFloat((Math.random() * (33 - 26) + 26).toFixed(1)),
+      humidity: Math.floor(Math.random() * (95 - 65) + 65)
+    });
+  }
+  return data;
+}
+const INITIAL_HISTORY = generateSensorHistory(30);
+
 // Removed hardcoded ALERTS array to use Supabase instead.
 
 function randomBetween(min, max, decimal = 1) {
@@ -131,6 +150,7 @@ export function DataProvider({ children }) {
   });
   const [zones] = useState(ZONE_DATA);
   const [growthData] = useState(GROWTH_DATA);
+  const [sensorHistory] = useState(INITIAL_HISTORY);
   const [alerts, setAlerts] = useState([]);
   // harvestInfo is now owned by UserContext (derived from plant type + plantedAt)
 
@@ -445,6 +465,7 @@ export function DataProvider({ children }) {
       toggleSprinkler,
       zones,
       growthData,
+      sensorHistory,
       alerts,
       markAlertRead,
       unreadAlertCount,
